@@ -1,16 +1,41 @@
 version: '3.8'
 
 services:
+  db:
+    build: ./psql_docker
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: "Alex"
+      POSTGRES_PASSWORD: "postgres"
+    user: '1000'
+    volumes:
+      - type: bind
+        source: ./db-data/postgres
+        target: /var/lib/postgresql/data
+    networks:
+      backend:
+        aliases:
+          - psql
   firstservice:
     image: com.microframe-first-service:0.0.1-SNAPSHOT
     ports:
       - "8080:8080"
-    environment:
-      - "SPRING_PROFILES_ACTIVE=dev"
     networks:
       backend:
         aliases:
-          - "firstservice"
+          - firstservice
+    depends_on:
+      - db
+      - configserver
+  configserver:
+    image: com.microframe-configserver:0.0.1-SNAPSHOT
+    ports:
+      - "8071:8071"
+    networks:
+      backend:
+        aliases:
+          - configserver
 networks:
   backend:
     driver: bridge

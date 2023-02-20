@@ -1,49 +1,48 @@
 package com.microframe.first.service
 
-import com.microframe.first.model.FirstModel
+import com.microframe.first.model.FirstServiceModel
+import com.microframe.first.repository.FirstRepository
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
 import java.util.*
-import kotlin.random.Random
 
 @Service
 open class FirstService {
     @Autowired
     lateinit var messages: MessageSource
+    @Autowired
+    lateinit var firstRepository: FirstRepository
 
-    fun getFirst(firstId: String, secondId: String): FirstModel {
-        val fm: FirstModel = FirstModel(Random.nextInt(0, 10000))
-        fm.firstId = firstId
-        fm.secondId = secondId
-        fm.description = "Description"
-        fm.name = "Default name"
-        fm.spareField = "Default spare field value"
-        return fm
-    }
-
-    fun createFirst(first: FirstModel?, secondId: String, locale: Locale):String? {
-        var responseMessage: String? = null
-        first?.let {
-            it.secondId = secondId
-            responseMessage = String.format(messages.getMessage("first.create.message", null, locale), first.toString())
+    fun getFirst(firstName: String, secondName: String, locale: Locale): FirstServiceModel {
+        val fm: FirstServiceModel? = firstRepository.findByFirstNameAndSecondName(firstName, secondName)
+        fm?.let {
+            return it
         }
-        return responseMessage
+        throw IllegalArgumentException(
+            String.format(messages.getMessage(
+                "first.search.error.message", null, locale),
+                firstName, secondName));
     }
 
-    fun updateFirst(first: FirstModel?, secondId: String, locale: Locale):String? {
-        var responseMessage: String? = null
-        first?.let {
-            it.secondId = secondId
-            responseMessage = String.format(messages.getMessage("first.update.message", null, locale), first.toString())
+    fun createFirst(first: FirstServiceModel, locale: Locale):FirstServiceModel {
+        first.apply {
+            firstName = String.format("firstId_%s", UUID.randomUUID())
         }
-        return responseMessage
+        firstRepository.save(first)
+        return first
     }
 
-    fun deleteFirst(firstId: String, secondId: String, locale: Locale):String? {
-        var responseMessage: String? = null
-        responseMessage = String.format(messages.getMessage("first.delete.message", null, locale),
-            firstId, secondId)
+    fun updateFirst(first: FirstServiceModel, locale: Locale):FirstServiceModel {
+        firstRepository.save(first)
+        return first
+    }
+
+    fun deleteFirst(firstName: String, locale: Locale):String {
+        var firstForDel = firstRepository.findByFirstName(firstName)
+        var responseMessage = String.format(messages.getMessage("first.delete.message", null, locale),
+            firstName, firstForDel?.secondName)
+        firstRepository.deleteByFirstName(firstName)
         return responseMessage
     }
 

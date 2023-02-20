@@ -2,12 +2,18 @@ spring:
   application:
     name: config-server
   profiles:
-    active: native
+    active:
+    - native
+#    - git
   cloud:
     config:
       server:
         bootstrap: true
         native:
           search-locations: classpath:/config
+#        git:
+#          uri: https://github.com/...
 server:
   port: 8071
+encrypt:
+  key: 64590b06d00b4bfcb3cc5bfeae0ced
