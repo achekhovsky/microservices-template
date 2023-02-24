@@ -17,6 +17,21 @@ services:
       backend:
         aliases:
           - psql
+  mongoserver:
+   build: ./mongo_docker
+   user: '1000'
+   restart: always
+   ports:
+    - "30001:27017"
+   env_file: ./mongo_docker/init_db.env
+   volumes:
+    - type: bind
+      source: ./mongo-db-data/secondservice/db
+      target: /data/db
+   networks:
+    backend:
+      aliases:
+        - mongoserver
   firstservice:
     image: com.microframe-first-service:0.0.1-SNAPSHOT
     ports:
