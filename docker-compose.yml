@@ -17,6 +17,11 @@ services:
       backend:
         aliases:
           - psql
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 3
   mongoserver:
    build: ./mongo_docker
    user: '1000'
@@ -41,8 +46,29 @@ services:
         aliases:
           - firstservice
     depends_on:
-      - db
-      - configserver
+      db:
+        condition: service_healthy
+      configserver:
+        condition: service_started
+  configserver:
+    image: com.microframe-configserver:0.0.1-SNAPSHOT
+    ports:
+      - "8071:8071"
+    networks:
+      backend:
+        aliases:
+          - configserver
+  secondservice:
+    image: com.microframe-second-service:0.0.1-SNAPSHOT
+    ports:
+      - "8090:8080"
+    networks:
+      backend:
+        aliases:
+          - secondservice
+    depends_on:
+      configserver:
+        condition: service_started
   configserver:
     image: com.microframe-configserver:0.0.1-SNAPSHOT
     ports:
