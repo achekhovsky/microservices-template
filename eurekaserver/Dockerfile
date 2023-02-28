@@ -20,9 +20,6 @@ COPY ${JAR_FILE} app.jar
 RUN java -Djarmode=layertools -jar app.jar extract
 
 FROM openjdk:18-slim
-  
-#For healthchecking
-RUN apt-get update && apt-get install -y curl
 
 VOLUME /tmp
 

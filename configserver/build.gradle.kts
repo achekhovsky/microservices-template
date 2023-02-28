@@ -29,7 +29,7 @@ dependencies {
 }
 
 docker {
-	name = "${project.group}-${project.name}:${project.version}"
+	name = "microframe_${project.name}:${project.version}"
 	tag("microframeConfigServer", "${project.version}")
 	setDockerfile(file("Dockerfile"))
 	buildArgs(mapOf("JAR_FILE" to "/build/libs/${project.name}-$version.jar"))

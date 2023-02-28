@@ -21,7 +21,7 @@ open class SecondService {
         }
         throw IllegalArgumentException(
             String.format(messages.getMessage(
-                "second.search.error.message", null, locale), null, secondName));
+                "second.search.error.message", null, locale), secondName));
     }
 
     fun createSecond(second: SecondServiceModel, locale: Locale):SecondServiceModel {

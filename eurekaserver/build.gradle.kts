@@ -4,9 +4,9 @@ import org.springframework.boot.gradle.tasks.bundling.BootJar
 plugins {
 	id("org.springframework.boot") version "3.0.2"
 	id("io.spring.dependency-management") version "1.1.0"
-	id("org.jetbrains.kotlin.jvm") version "1.8.0"
-	id("org.jetbrains.kotlin.plugin.spring") version "1.8.0"
 	id("com.palantir.docker") version "0.34.0"
+	kotlin("jvm") version "1.7.22"
+	kotlin("plugin.spring") version "1.7.22"
 }
 
 group = "com.microframe"
@@ -15,26 +15,30 @@ java.sourceCompatibility = JavaVersion.VERSION_17
 
 repositories {
 	mavenCentral()
+	maven { url = uri("https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates") }
 }
+
+extra["springCloudVersion"] = "2022.0.1"
 
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
-	implementation("org.springframework.boot:spring-boot-starter-web")
-	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
 	implementation("org.jetbrains.kotlin:kotlin-reflect")
 	implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
-	implementation("org.springframework.cloud:spring-cloud-starter-config:4.0.1")
-	implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.1")
-	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
-	implementation("javax.xml.bind:jaxb-api:2.3.1")
-	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.0")
+	implementation("org.springframework.cloud:spring-cloud-starter-config")
+	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-server")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+	implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.0")
 }
 
+dependencyManagement {
+	imports {
+		mavenBom("org.springframework.cloud:spring-cloud-dependencies:${property("springCloudVersion")}")
+	}
+}
 
 docker {
-	name = "${project.group}-${project.name}:${project.version}"
-	tag("microframeSecond", "${project.version}")
+	name = "microframe_${project.name}:${project.version}"
+	tag("microframeEureka", "${project.version}")
 	setDockerfile(file("Dockerfile"))
 	buildArgs(mapOf("JAR_FILE" to "/build/libs/${project.name}-$version.jar"))
 	copySpec.from("build/libs").into("build/libs")
@@ -57,4 +61,3 @@ tasks.named<BootJar>("bootJar") {
 		includeLayerTools.set(true)
 	}
 }
-

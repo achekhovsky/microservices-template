@@ -1,6 +1,31 @@
 version: '3.8'
 
 services:
+  configserver:
+    image: microframe_configserver:0.0.1-SNAPSHOT
+    ports:
+      - "8071:8071"
+    healthcheck:
+      test:  ["CMD-SHELL", "curl --fail --silent localhost:8071/actuator/health/readiness | grep UP || exit 1"]   
+      interval: 5s
+      timeout: 5s
+      start_period: 10s
+      retries: 3
+    networks:
+      backend:
+        aliases:
+          - configserver
+  eurekaserver:
+    image: microframe_eurekaserver:0.0.1-SNAPSHOT
+    ports:
+      - "8070:8761"
+    networks:
+      backend:
+        aliases:
+          - "eurekaserver"         
+    depends_on:
+      configserver:
+        condition: service_healthy  
   db:
     build: ./psql_docker
     ports:
@@ -19,8 +44,9 @@ services:
           - psql
     healthcheck:
       test: ["CMD-SHELL", "pg_isready -U postgres"]
-      interval: 5s
+      interval: 6s
       timeout: 5s
+      start_period: 5s
       retries: 3
   mongoserver:
    build: ./mongo_docker
@@ -46,18 +72,12 @@ services:
         aliases:
           - firstservice
     depends_on:
-      db:
-        condition: service_healthy
       configserver:
         condition: service_started
-  configserver:
-    image: com.microframe-configserver:0.0.1-SNAPSHOT
-    ports:
-      - "8071:8071"
-    networks:
-      backend:
-        aliases:
-          - configserver
+      eurekaserver:
+        condition: service_started
+      db:
+        condition: service_healthy
   secondservice:
     image: com.microframe-second-service:0.0.1-SNAPSHOT
     ports:
@@ -69,14 +89,10 @@ services:
     depends_on:
       configserver:
         condition: service_started
-  configserver:
-    image: com.microframe-configserver:0.0.1-SNAPSHOT
-    ports:
-      - "8071:8071"
-    networks:
-      backend:
-        aliases:
-          - configserver
+      eurekaserver:
+        condition: service_started
+      mongoserver:
+        condition: service_started
 networks:
   backend:
     driver: bridge

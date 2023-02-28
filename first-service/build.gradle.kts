@@ -28,6 +28,7 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-jpa:3.0.2")
 	implementation("org.postgresql:postgresql:42.5.1")
 	implementation("org.springframework.cloud:spring-cloud-starter-bootstrap:4.0.0")
+	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.0")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
