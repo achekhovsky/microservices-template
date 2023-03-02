@@ -2,6 +2,7 @@ package com.microframe.first.service
 
 import com.microframe.first.model.FirstServiceModel
 import com.microframe.first.repository.FirstRepository
+import com.microframe.first.service.client.SecondServiceDiscoveryClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
@@ -13,10 +14,16 @@ open class FirstService {
     lateinit var messages: MessageSource
     @Autowired
     lateinit var firstRepository: FirstRepository
+    @Autowired
+    lateinit var secondServiceDiscoveryClient: SecondServiceDiscoveryClient
 
     fun getFirst(firstName: String, secondName: String, locale: Locale): FirstServiceModel {
         val fm: FirstServiceModel? = firstRepository.findByFirstNameAndSecondName(firstName, secondName)
         fm?.let {
+            var second = secondServiceDiscoveryClient.getSecond(secondName, locale)
+            second?.let { sec -> it.description = String.format(messages.getMessage(
+                "first.about.second.message", null, locale), sec.toString())
+            }
             return it
         }
         throw IllegalArgumentException(
