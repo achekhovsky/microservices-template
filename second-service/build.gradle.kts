@@ -17,6 +17,8 @@ repositories {
 	mavenCentral()
 }
 
+val resilience4jVersion = "2.0.2"
+
 dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-web")
@@ -28,6 +30,13 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-data-mongodb")
 	implementation("javax.xml.bind:jaxb-api:2.3.1")
 	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client:4.0.0")
+
+	implementation("io.github.resilience4j:resilience4j-spring-boot3:${resilience4jVersion}")
+	implementation("org.springframework.boot:spring-boot-starter-aop")
+	implementation("io.github.resilience4j:resilience4j-circuitbreaker:${resilience4jVersion}")
+//	implementation("io.github.resilience4j:resilience4j-retry:${resilience4jVersion}")
+//	implementation("io.github.resilience4j:resilience4j-bulkhead:${resilience4jVersion}")
+//	implementation("io.github.resilience4j:resilience4j-timelimiter:${resilience4jVersion}")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

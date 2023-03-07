@@ -1,6 +1,7 @@
 package com.microframe.first.service.client
 
 import com.microframe.first.model.SecondServiceModel
+import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.http.HttpHeaders
 import org.springframework.http.HttpMethod
@@ -14,6 +15,8 @@ class SecondServiceDiscoveryClient {
     @Autowired
     private lateinit var restTemplate: RestTemplate
 
+    //Breaker for the services interaction
+    @CircuitBreaker(name = "firstServiceExternalCBreaker")
     fun getSecond (secondName: String, locale: Locale): SecondServiceModel? {
         val serviceUri = "http://second-service/v1/microFrame/second/{secondName}"
         var restExchange = restTemplate.exchange(
