@@ -37,8 +37,8 @@ dependencies {
 	implementation("io.github.resilience4j:resilience4j-spring-boot3:${resilience4jVersion}")
 	implementation("org.springframework.boot:spring-boot-starter-aop")
 	implementation("io.github.resilience4j:resilience4j-circuitbreaker:${resilience4jVersion}")
-//	implementation("io.github.resilience4j:resilience4j-retry:${resilience4jVersion}")
-//	implementation("io.github.resilience4j:resilience4j-bulkhead:${resilience4jVersion}")
+	implementation("io.github.resilience4j:resilience4j-retry:${resilience4jVersion}")
+	implementation("io.github.resilience4j:resilience4j-bulkhead:${resilience4jVersion}")
 //	implementation("io.github.resilience4j:resilience4j-timelimiter:${resilience4jVersion}")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

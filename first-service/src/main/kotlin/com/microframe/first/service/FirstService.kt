@@ -3,6 +3,7 @@ package com.microframe.first.service
 import com.microframe.first.model.FirstServiceModel
 import com.microframe.first.repository.FirstRepository
 import com.microframe.first.service.client.SecondServiceDiscoveryClient
+import io.github.resilience4j.bulkhead.annotation.Bulkhead
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
@@ -40,6 +41,7 @@ open class FirstService {
         return first
     }
 
+    @Bulkhead(name = "firstServiceExternalBulkhead")
     fun updateFirst(first: FirstServiceModel, locale: Locale):FirstServiceModel {
         firstRepository.save(first)
         return first
