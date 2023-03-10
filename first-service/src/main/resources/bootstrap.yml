@@ -11,3 +11,8 @@ management:
     health:
       enabled: true
       show-details: always
+logging:
+  level:
+    com.netflix: WARN
+    org.springframework.web: WARN
+    com.microframe.first: DEBUG
