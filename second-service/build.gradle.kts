@@ -20,6 +20,8 @@ repositories {
 val resilience4jVersion = "2.0.2"
 
 dependencies {
+	implementation(layout.files("../utils/microframe-utils-1.0.1.jar"))
+
 	implementation("org.springframework.boot:spring-boot-starter-actuator")
 	implementation("org.springframework.boot:spring-boot-starter-web")
 	implementation("com.fasterxml.jackson.module:jackson-module-kotlin")

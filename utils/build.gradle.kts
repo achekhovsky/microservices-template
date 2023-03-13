@@ -18,6 +18,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.jetbrains.kotlin:kotlin-stdlib-jdk8")
     implementation("org.slf4j:slf4j-api:$slf4jVersion")
+    implementation("org.springframework:spring-web:6.0.3")
     compileOnly("jakarta.servlet:jakarta.servlet-api:$jakartaServletApiVersion")
 }
 
