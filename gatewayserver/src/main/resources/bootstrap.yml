@@ -1,0 +1,23 @@
+server:
+  port: 8072
+spring:
+  application:
+    name: gateway-server
+  cloud:
+    config:
+      uri: http://configserver:8071
+management:
+  endpoint:
+    health:
+      enabled: true
+      show-details: always
+  #Enable all Spring Boot Actuator endpoints.
+  endpoints:
+    web:
+      exposure:
+        include: "*"
+logging:
+  level:
+    com.netflix: WARN
+    org.springframework.web: WARN
+    com.microframe.gateway: DEBUG

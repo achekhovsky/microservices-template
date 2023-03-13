@@ -26,6 +26,19 @@ services:
     depends_on:
       configserver:
         condition: service_healthy  
+  gatewayserver:
+    image: microframe_gatewayserver:0.0.1-SNAPSHOT
+    ports:
+      - "8072:8072"
+    networks:
+      backend:
+        aliases:
+          - "gatewayserver"         
+    depends_on:
+      configserver:
+        condition: service_healthy  
+      eurekaserver:
+        condition: service_started
   db:
     build: ./psql_docker
     ports:
