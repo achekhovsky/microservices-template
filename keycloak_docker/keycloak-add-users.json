@@ -1,0 +1,35 @@
+[ {
+  "realm" : "microframe",
+  "users" : [ {
+    "username" : "microframe.admin",
+    "enabled" : true,
+    "credentials" : [ {
+      "type" : "password",
+      "value" : "admin",
+      "temporary" : false
+    } ],
+    "realmRoles" : [ "microframe-realm-admin-role", "uma_authorization", "offline_access" ]
+  }, {
+    "username" : "microframe.user",
+    "enabled" : true,
+    "credentials" : [ {
+      "type" : "password",
+      "secretData" : "{\"value\":\"25d401d40fee6b2d7818cecf0083d07734e42512682af7053cc5606df076fb34fa175634d663fc9d367298f4\",\"salt\":\"dvrAjc2Bm5hfC8NywmSFbw==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":27500,\"algorithm\":\"pbkdf2-sha256\"}",
+      "temporary" : false
+    } ],
+    "realmRoles" : [ "microframe-realm-user-role", "uma_authorization", "offline_access" ]
+  } ]
+}, {
+  "realm" : "master",
+  "users" : [ {
+    "username" : "admin",
+    "enabled" : true,
+    "credentials" : [ {
+      "type" : "password",
+      "secretData" : "{\"value\":\"NXByXJV1jlv9gOnIWH+neuxse/t5ArdavuhJmNsI1M0AYTXbo+hhM+T8D7AWk1jeuySBV4ymKu5jzBOePaxFnw==\",\"salt\":\"4TkGPg9redhJDgPUQGZlnQ==\",\"additionalParameters\":{}}",
+      "credentialData" : "{\"hashIterations\":100000,\"algorithm\":\"pbkdf2-sha256\",\"additionalParameters\":{}}"
+    } ],
+    "realmRoles" : [ "admin" ]
+  } ]
+} ]

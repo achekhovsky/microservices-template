@@ -106,6 +106,41 @@ services:
         condition: service_started
       mongoserver:
         condition: service_started
+      keycloak:
+        condition: service_healthy
+  keycloak:
+    build: keycloak_docker
+    restart: always
+    environment:
+      KC_HEALTH_ENABLED: "true"
+      KEYCLOAK_STATISTICS: "db, http" 
+      #      KEYCLOAK_USER: admin
+      #      KEYCLOAK_PASSWORD: admin
+    volumes:
+      - type: bind
+        source: ./keycloak_docker/keycloak-add-users.json
+        target: /opt/jboss/keycloak/standalone/configuration/keycloak-add-user.json
+          # read_only: true
+      - type: bind 
+        source: ./keycloak_docker/realm-export.json
+        target: /opt/jboss/keycloak/realm-export.json
+    command:
+      - "-b 0.0.0.0"
+      - "-Dkeycloak.import=/opt/jboss/keycloak/realm-export.json"
+      - "-Dkeycloak.profile.feature.scripts=enabled"
+      - "-Dkeycloak.profile.feature.upload_scripts=enabled"
+    ports:
+      - "9080:8080"
+    healthcheck:
+      test:  ["CMD-SHELL", "curl --fail --silent localhost:8080/auth/realms/microframe"]   
+      interval: 5s
+      timeout: 5s
+      start_period: 30s
+      retries: 5
+    networks:
+      backend:
+        aliases:
+        - "keycloak"
 networks:
   backend:
     driver: bridge
