@@ -17,9 +17,9 @@ open class UserContextFilter: Filter {
 
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
         val httpServletRequest = request as HttpServletRequest
-
         UserContextHolder.getContext().trackId = httpServletRequest.getHeader(UserContext.TRACK_ID) ?: ""
         UserContextHolder.getContext().userId = httpServletRequest.getHeader(UserContext.USER_ID) ?: ""
+        UserContextHolder.getContext().authToken = httpServletRequest.getHeader(UserContext.AUTH_TOKEN) ?: ""
 
         chain?.doFilter(httpServletRequest, response)
     }

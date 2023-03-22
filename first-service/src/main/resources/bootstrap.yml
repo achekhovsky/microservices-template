@@ -15,4 +15,6 @@ logging:
   level:
     com.netflix: WARN
     org.springframework.web: WARN
+    org.springframework.security: DEBUG
+    org.springframework.security.jwt: DEBUG
     com.microframe.first: DEBUG

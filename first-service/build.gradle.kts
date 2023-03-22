@@ -43,6 +43,12 @@ dependencies {
 	implementation("io.github.resilience4j:resilience4j-bulkhead:${resilience4jVersion}")
 //	implementation("io.github.resilience4j:resilience4j-timelimiter:${resilience4jVersion}")
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
+
+	implementation("org.springframework.boot:spring-boot-starter-security:3.0.2")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-client:3.0.2")
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.0.2")
+
+	implementation("org.springframework.security:spring-security-oauth2-jose:6.0.2")
 }
 
 
