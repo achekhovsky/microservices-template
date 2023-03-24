@@ -15,7 +15,7 @@ open class UserContext {
     var authToken = String()
 
     override fun toString(): String {
-        return "UserContext(trackId='$trackId', userId='$userId', authToken='$authToken')"
+        return "UserContext(trackId='$trackId', userId='$userId', authToken='${authToken.take(20)}...')"
     }
 
 
