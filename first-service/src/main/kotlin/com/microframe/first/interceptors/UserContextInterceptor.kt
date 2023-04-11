@@ -1,7 +1,6 @@
 package com.microframe.first.interceptors
 
 import com.microframe.custom.utils.service.UserContextHolder
-import com.microframe.first.filters.UserContextFilter
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.http.HttpRequest

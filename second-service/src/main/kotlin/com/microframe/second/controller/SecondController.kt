@@ -14,22 +14,34 @@ class SecondController {
     @Autowired
     private lateinit var secondService: SecondService
 
-    @GetMapping(value = ["/{secondName}"])
-    fun getSecond(
-        @PathVariable("secondName") secondName:String,
-        @RequestHeader(value = "Accept-Language",required = false) locale: Locale
+    @GetMapping(value = ["/id/{secondId}"])
+    fun getSecondById(
+        @PathVariable("secondId") secondId:String,
+        @RequestHeader(value = "Accept-Language",required = false) strLocale: String
     ): ResponseEntity<SecondServiceModel> {
-        var second: SecondServiceModel = secondService.getSecond(secondName, locale)
+        val locale = Locale(strLocale)
+        var second: SecondServiceModel = secondService.getSecondById(secondId, locale)
         return ResponseEntity.ok(second)
     }
 
-    @PutMapping(value = ["/{secondName}"])
-    fun updateSecond(
+    @GetMapping(value = ["/{secondName}"])
+    fun getSecondByName(
         @PathVariable("secondName") secondName:String,
-        @RequestBody request: SecondServiceModel,
-        @RequestHeader(value = "Accept-Language",required = false) locale: Locale
+        @RequestHeader(value = "Accept-Language",required = false) strLocale: String
     ): ResponseEntity<SecondServiceModel> {
-        var updatable = secondService.getSecond(secondName, locale)
+        val locale = Locale(strLocale)
+        var second: SecondServiceModel = secondService.getSecondByName(secondName, locale)
+        return ResponseEntity.ok(second)
+    }
+
+    @PutMapping(value = ["/id/{secondId}"])
+    fun updateSecond(
+        @PathVariable("secondId") secondId:String,
+        @RequestBody request: SecondServiceModel,
+        @RequestHeader(value = "Accept-Language",required = false) strLocale: String
+    ): ResponseEntity<SecondServiceModel> {
+        val locale = Locale(strLocale)
+        var updatable = secondService.getSecondById(secondId, locale)
         updatable.secondName = request.secondName
         updatable.someData = request.someData
         updatable.description = request.description
@@ -40,17 +52,19 @@ class SecondController {
     @PostMapping
     fun createSecond(
         @RequestBody request: SecondServiceModel,
-        @RequestHeader(value = "Accept-Language",required = false) locale: Locale
+        @RequestHeader(value = "Accept-Language",required = false) strLocale: String
     ): ResponseEntity<SecondServiceModel> {
+        val locale = Locale(strLocale)
         return ResponseEntity.ok(secondService.createSecond(request, locale))
     }
 
-    @DeleteMapping(value = ["/{secondName}"])
+    @DeleteMapping(value = ["/id/{secondId}"])
     fun deleteSecond(
-        @PathVariable("secondName") secondName:String,
-        @RequestHeader(value = "Accept-Language",required = false) locale: Locale
+        @PathVariable("secondId") secondId:String,
+        @RequestHeader(value = "Accept-Language",required = false) strLocale: String
     ): ResponseEntity<String> {
-        return ResponseEntity.ok(secondService.deleteSecond(secondName, locale))
+        val locale = Locale(strLocale)
+        return ResponseEntity.ok(secondService.deleteSecond(secondId, locale))
     }
 
 }

@@ -16,7 +16,7 @@ class UserContextFilter: com.microframe.custom.utils.filters.UserContextFilter()
     override fun doFilter(request: ServletRequest?, response: ServletResponse?, chain: FilterChain?) {
         super.doFilter(request, response, chain)
         val httpServletRequest = request as HttpServletRequest
-        logger.debug("Caught by context filter - ${httpServletRequest.getHeader("Authorization")}")
+        logger.debug("Caught by context filter - ${httpServletRequest.getHeader("Authorization").take(20)}...")
         logger.debug("UserContextFilter::doFilter -> The user context has been set. ${UserContextHolder.getContext()}")
     }
 }

@@ -20,7 +20,8 @@ import kotlin.jvm.optionals.getOrNull
 @Component
 class SecondServiceDiscoveryClient {
     private val logger: Logger = LoggerFactory.getLogger(SecondServiceDiscoveryClient::class.java)
-    private val serviceUri = "http://second-service/v1/microFrame/second/{secondName}"
+    private val serviceUriById = "http://second-service/v1/microFrame/second/id/{secondId}"
+//    private val serviceUriById = "http://gateway-server/sservice/v1/microFrame/second/id/{secondId}"
 
     @Autowired
     private lateinit var restTemplate: RestTemplate
@@ -31,48 +32,52 @@ class SecondServiceDiscoveryClient {
     //Breaker for the services interaction
     @CircuitBreaker(name = "firstServiceExternalCBreaker")
     @Retry(name = "firstServiceExternalRetry")
-    fun getSecond (secondName: String, locale: Locale): SecondServiceModel? {
+    fun getSecond (secondId: String, locale: Locale): SecondServiceModel? {
         return try {
-            checkNotNull(checkCsh(secondName)) { logger.error("Second instance with name [$secondName] not found in Redis cash.") }
+            checkNotNull(checkCsh(secondId)) { logger.error("Second instance with id [$secondId] not found in Redis cash.") }
         } catch (ex: Exception) {
-            val secondFromService = getFromService(secondName, locale)
+            val secondFromService = getFromServiceById(secondId, locale)
             secondFromService?.let { updateCsh(it) }
             secondFromService
         }
     }
 
-    private fun checkCsh(secondName: String):  SecondServiceModel? {
+    private fun checkCsh(secondId: String):  SecondServiceModel? {
         return try {
-            val fromCash = secondServiceRedisRepository.findById(secondName).getOrNull()
-            logger.debug("Second instance with name [$secondName] successfully retrieved from Redis.")
+            val fromCash = secondServiceRedisRepository.findById(secondId).getOrNull()
+            logger.debug("Second instance with id [$secondId] successfully retrieved from Redis.")
             fromCash
         } catch (ex: Exception) {
-            logger.error("Error encountered while trying to retrieve second instance with name [$secondName] from Redis. Exception $ex")
+            logger.error("Error encountered while trying to retrieve second instance with id [$secondId] from Redis. Exception $ex")
             null;
         }
     }
 
-    private fun updateCsh(ssInstance: SecondServiceModel) {
+    fun updateCsh(ssInstance: SecondServiceModel) {
         try {
             secondServiceRedisRepository.save(ssInstance)
-            logger.debug("Second instance with name [${ssInstance.secondName}] successfully saved in Redis.")
+            logger.debug("Second instance with id [${ssInstance.id}] successfully saved in Redis.")
         } catch (ex: Exception) {
             logger.error("Unable to cache second instance [$ssInstance] in Redis. Exception $ex")
         }
     }
 
-    private fun getFromService(secondName: String, locale: Locale): SecondServiceModel? {
+    fun getFromServiceById(secondId: String, locale: Locale): SecondServiceModel? {
         //Get JWT from context then pass it to next request
-        val oAuth2AuthenticationToken: JwtAuthenticationToken? = SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken
-        val token = "Bearer ${oAuth2AuthenticationToken?.token?.tokenValue}"
+
         var restExchange = restTemplate.exchange(
-            serviceUri,
+            serviceUriById,
             HttpMethod.GET,
-            RequestEntity.head(serviceUri)
+            RequestEntity.head(serviceUriById)
                 .header(HttpHeaders.ACCEPT_LANGUAGE, locale.toLanguageTag())
-                .header(HttpHeaders.AUTHORIZATION, token).build(),
+                .header(HttpHeaders.AUTHORIZATION, getToken()).build(),
             SecondServiceModel::class.java,
-            secondName)
+            secondId)
         return restExchange.body
+    }
+
+    private fun getToken(): String {
+        val oAuth2AuthenticationToken: JwtAuthenticationToken? = SecurityContextHolder.getContext().authentication as? JwtAuthenticationToken
+        return "Bearer ${oAuth2AuthenticationToken?.token?.tokenValue}"
     }
 }

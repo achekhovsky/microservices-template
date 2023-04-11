@@ -45,6 +45,10 @@ dependencies {
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-resource-server:3.0.2")
 	implementation("org.springframework.security:spring-security-oauth2-jose:6.0.2")
 
+	implementation("org.springframework.cloud:spring-cloud-stream:4.0.1")
+	implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka:4.0.1")
+	implementation("org.springframework.kafka:spring-kafka:3.0.5")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

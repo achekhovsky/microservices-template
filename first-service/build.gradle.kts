@@ -54,6 +54,10 @@ dependencies {
 	}
 	implementation("redis.clients:jedis")
 
+	implementation("org.springframework.cloud:spring-cloud-stream:4.0.1")
+	implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka:4.0.1")
+	implementation("org.springframework.kafka:spring-kafka:3.0.5")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*
 import java.util.*
 
 @RestController
-@RequestMapping(value=["v1/microFrame/{secondName}/first"])
+@RequestMapping(value=["v1/microFrame/{secondId}/first"])
 class FirstController {
 
     @Autowired
@@ -18,25 +18,26 @@ class FirstController {
     @GetMapping(value = ["/{firstName}"])
     fun getFirst(
         @PathVariable("firstName") firstName:String,
-        @PathVariable("secondName") secondName:String,
-        @RequestHeader(value = "Accept-Language",required = false) locale: Locale
+        @PathVariable("secondId") secondId:String,
+        @RequestHeader(value = "Accept-Language",required = false) strLocale: String
     ): ResponseEntity<FirstServiceModel> {
-        var first: FirstServiceModel = firstService.getFirst(firstName, secondName, locale)
+        val locale = Locale(strLocale)
+        var first: FirstServiceModel = firstService.getFirst(firstName, secondId, locale)
         first.add(
             linkTo<FirstController> {
-                getFirst(first.firstName, secondName, locale)
+                getFirst(first.firstName, secondId, strLocale)
             }
             .withSelfRel(),
             linkTo<FirstController> {
-                updateFirst(secondName, firstName, first, locale)
+                updateFirst(secondId, firstName, first, strLocale)
             }
                 .withRel("updateFirst"),
             linkTo<FirstController> {
-                createFirst(secondName, first, locale)
+                createFirst(secondId, first, strLocale)
             }
                 .withRel("createFirst"),
             linkTo<FirstController> {
-                deleteFirst(first.firstName, secondName, locale)
+                deleteFirst(first.firstName, secondId, strLocale)
             }
                 .withRel("deleteFirst")
         )
@@ -45,14 +46,15 @@ class FirstController {
 
     @PutMapping(value = ["/{firstName}"])
     fun updateFirst(
-        @PathVariable("secondName") secondName:String,
+        @PathVariable("secondId") secondId:String,
         @PathVariable("firstName") firstName:String,
         @RequestBody request: FirstServiceModel,
-        @RequestHeader(value = "Accept-Language",required = false) locale: Locale
+        @RequestHeader(value = "Accept-Language",required = false) strLocale: String
     ): ResponseEntity<FirstServiceModel> {
-        var updatable = firstService.getFirst(firstName, secondName, locale)
+        val locale = Locale(strLocale)
+        var updatable = firstService.getFirst(firstName, secondId, locale)
         updatable.firstName = request.firstName
-        updatable.secondName = request.secondName
+        updatable.secondId = request.secondId
         updatable.commentField = request.commentField
         updatable.description = request.commentField
         updatable.spareField = request.spareField
@@ -61,19 +63,21 @@ class FirstController {
 
     @PostMapping
     fun createFirst(
-        @PathVariable("secondName") secondName:String,
+        @PathVariable("secondId") secondId:String,
         @RequestBody request: FirstServiceModel,
-        @RequestHeader(value = "Accept-Language",required = false) locale: Locale
+        @RequestHeader(value = "Accept-Language",required = false) strLocale: String
     ): ResponseEntity<FirstServiceModel> {
+        val locale = Locale(strLocale)
         return ResponseEntity.ok(firstService.createFirst(request, locale))
     }
 
     @DeleteMapping(value = ["/{firstName}"])
     fun deleteFirst(
         @PathVariable("firstName") firstName:String,
-        @PathVariable("secondName") secondName:String,
-        @RequestHeader(value = "Accept-Language",required = false) locale: Locale
+        @PathVariable("secondId") secondId:String,
+        @RequestHeader(value = "Accept-Language",required = false) strLocale: String
     ): ResponseEntity<String> {
+        val locale = Locale(strLocale)
         return ResponseEntity.ok(firstService.deleteFirst(firstName, locale))
     }
 

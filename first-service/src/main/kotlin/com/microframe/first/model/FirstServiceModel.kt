@@ -4,7 +4,6 @@ import jakarta.persistence.*
 import org.hibernate.Hibernate
 import org.springframework.hateoas.RepresentationModel
 import java.util.UUID
-import kotlin.random.Random
 
 @Entity
 @Table(name="first_service")
@@ -15,8 +14,8 @@ data class FirstServiceModel(
     @Column(name = "first_name", nullable = false, unique = true)
     var firstName: String = "",
     var description: String = "",
-    @Column(name = "second_name", nullable = false)
-    var secondName: String = "",
+    @Column(name = "second_id", nullable = false)
+    var secondId: String = "",
     @Column(name = "comment_field", nullable = false)
     var commentField: String = "",
     @Column(name = "spare_field", nullable = false)
@@ -41,7 +40,7 @@ data class FirstServiceModel(
             id,
             firstName,
             description,
-            secondName,
+            secondId,
             commentField,
             spareField)
     }

@@ -22,18 +22,6 @@ class SecurityConfig {
     @Value("\${spring.security.oauth2.resourceserver.jwt.jwk-set-uri}")
     private lateinit var jwkSetUri: String
 
-//    @Bean
-//    protected fun sessionAuthenticationStrategy(): SessionAuthenticationStrategy? {
-//        return RegisterSessionAuthenticationStrategy(SessionRegistryImpl())
-//    }
-//
-//    @Bean
-//    @Throws(java.lang.Exception::class)
-//    fun authenticationManager(http: HttpSecurity): AuthenticationManager? {
-//        return http.getSharedObject(AuthenticationManagerBuilder::class.java)
-//            .build()
-//    }
-
     @Bean
     fun jwtDecoder(): JwtDecoder {
         // makes a request to the JWK Set endpoint
@@ -47,6 +35,7 @@ class SecurityConfig {
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): DefaultSecurityFilterChain? {
         http
+            .csrf().disable()
             .authorizeHttpRequests().anyRequest().authenticated().and()
             .oauth2ResourceServer().jwt()
         return http.build()

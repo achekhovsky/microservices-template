@@ -52,6 +52,7 @@ class SecurityConfig {
     @Throws(Exception::class)
     fun filterChain(http: HttpSecurity): DefaultSecurityFilterChain? {
         http
+            .csrf().disable()
             .authorizeHttpRequests().anyRequest().authenticated().and()
             .oauth2ResourceServer().jwt()
         return http.build()

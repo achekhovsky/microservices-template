@@ -5,6 +5,7 @@ import com.microframe.first.repository.FirstRepository
 import com.microframe.first.service.client.SecondServiceDiscoveryClient
 import io.github.resilience4j.bulkhead.annotation.Bulkhead
 import org.springframework.beans.factory.annotation.Autowired
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.MessageSource
 import org.springframework.stereotype.Service
 import java.util.*
@@ -18,10 +19,14 @@ open class FirstService {
     @Autowired
     lateinit var secondServiceDiscoveryClient: SecondServiceDiscoveryClient
 
-    fun getFirst(firstName: String, secondName: String, locale: Locale): FirstServiceModel {
-        val fm: FirstServiceModel? = firstRepository.findByFirstNameAndSecondName(firstName, secondName)
+    @Value(value = "\${common.data-change-topic}")
+    private lateinit var commProp:String
+
+
+    fun getFirst(firstName: String, secondId: String, locale: Locale): FirstServiceModel {
+        val fm: FirstServiceModel? = firstRepository.findByFirstNameAndSecondId(firstName, secondId)
         fm?.let {
-            var second = secondServiceDiscoveryClient.getSecond(secondName, locale)
+            var second = secondServiceDiscoveryClient.getSecond(secondId, locale)
             second?.let { sec -> it.description = String.format(messages.getMessage(
                 "first.about.second.message", null, locale), sec.toString())
             }
@@ -30,7 +35,7 @@ open class FirstService {
         throw IllegalArgumentException(
             String.format(messages.getMessage(
                 "first.search.error.message", null, locale),
-                firstName, secondName));
+                firstName, secondId));
     }
 
     fun createFirst(first: FirstServiceModel, locale: Locale):FirstServiceModel {
@@ -50,9 +55,13 @@ open class FirstService {
     fun deleteFirst(firstName: String, locale: Locale):String {
         var firstForDel = firstRepository.findByFirstName(firstName)
         var responseMessage = String.format(messages.getMessage("first.delete.message", null, locale),
-            firstName, firstForDel?.secondName)
+            firstName, firstForDel.secondId)
         firstRepository.deleteByFirstName(firstName)
         return responseMessage
+    }
+
+    fun findFirstBySecondId(secondId: String):List<FirstServiceModel> {
+        return firstRepository.findBySecondId(secondId)
     }
 
 
