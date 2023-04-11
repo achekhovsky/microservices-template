@@ -26,6 +26,9 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-gateway")
 	implementation("org.springframework.cloud:spring-cloud-starter-netflix-eureka-client")
 	implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
+
+	implementation("org.springframework.boot:spring-boot-starter-oauth2-client:3.0.2")
+
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }
 
