@@ -14,8 +14,9 @@
             <includeCallerData>true</includeCallerData>
             <providers>
                 <mdc>
-                    <excludeMdcKeyName>traceId</excludeMdcKeyName>
-                    <excludeMdcKeyName>spanId</excludeMdcKeyName>
+<!--                     TraceId and spanId are required for Zipkin -->
+<!--                     <excludeMdcKeyName>traceId</excludeMdcKeyName> -->
+<!--                     <excludeMdcKeyName>spanId</excludeMdcKeyName> -->
                 </mdc>
                 <contextName/>
                 <version/>

@@ -11,8 +11,9 @@
         <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
             <providers>
                 <mdc>
-                    <excludeMdcKeyName>traceId</excludeMdcKeyName>
-                    <excludeMdcKeyName>spanId</excludeMdcKeyName>
+<!--                     TraceId and spanId are required for Zipkin -->
+<!--                     <excludeMdcKeyName>traceId</excludeMdcKeyName> -->
+<!--                     <excludeMdcKeyName>spanId</excludeMdcKeyName> -->
                 </mdc>
                 <contextName/>
                 <version/>
@@ -29,8 +30,8 @@
                                 "relative": "#asLong{%relative}"
                             },
                             "trace": {
-                                "trace_id": "%mdc{traceId}",
-                                "span_id": "%mdc{spanId}",
+                                "traceId": "%mdc{traceId}",
+                                "spanId": "%mdc{spanId}",
                                 "parent_span_id": "%mdc{ParentSpanId}",
                                 "exportable": "%mdc{spanExportable}"
                             }
