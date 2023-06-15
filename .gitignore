@@ -3,6 +3,7 @@ HELP.md
 build/
 db-data/
 mongo-db-data/
+elastic-data/
 !gradle/wrapper/gradle-wrapper.jar
 !**/src/main/**/build/
 !**/src/test/**/build/

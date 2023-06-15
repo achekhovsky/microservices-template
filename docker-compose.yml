@@ -41,8 +41,8 @@ services:
         condition: service_started
   db:
     build: ./psql_docker
-    ports:
-      - "5432:5432"
+#    ports:
+#      - "5432:5432"
     environment:
       POSTGRES_USER: "Alex"
       POSTGRES_PASSWORD: "postgres"
@@ -65,8 +65,8 @@ services:
    build: ./mongo_docker
    user: '1000'
    restart: always
-   ports:
-    - "30001:27017"
+#   ports:
+#    - "30001:27017"
    env_file: ./mongo_docker/init_db.env
    volumes:
     - type: bind
@@ -78,8 +78,8 @@ services:
         - mongoserver
   firstservice:
     image: com.microframe-first-service:0.0.1-SNAPSHOT
-    ports:
-      - "8080:8080"
+#    ports:
+#      - "8080:8080"
     networks:
       backend:
         aliases:
@@ -95,8 +95,8 @@ services:
         condition: service_healthy
   secondservice:
     image: com.microframe-second-service:0.0.1-SNAPSHOT
-    ports:
-      - "8090:8080"
+#    ports:
+#      - "8090:8080"
     networks:
       backend:
         aliases:
@@ -150,24 +150,24 @@ services:
         - "keycloak"
   redisserver:
     image: redis:alpine
-    ports:
-      - 6379:6379
+#    ports:
+#      - 6379:6379
     networks:
       backend:
         aliases:
           - "redis"
   zookeeper:
     image: wurstmeister/zookeeper:latest
-    ports:
-      - 2181:2181
+#    ports:
+#      - 2181:2181
     networks:
       backend:
         aliases:
           - "zookeeper"
   kafkaserver:
     image: wurstmeister/kafka:latest
-    ports:
-      - 9092:9092
+#    ports:
+#      - 9092:9092
     environment:
       - KAFKA_ADVERTISED_HOST_NAME=kafka
       - KAFKA_ADVERTISED_PORT=9092
@@ -181,6 +181,42 @@ services:
       backend:
         aliases:
           - "kafka"
+  logstash:
+    build: logstash_docker
+#    ports:
+#      - "5000:5000"
+    networks:
+      backend:
+        aliases:
+          - "logstash"   
+  elasticsearch:
+    #    image: docker.elastic.co/elasticsearch/elasticsearch:8.7.1
+    image: elasticsearch:8.7.1
+    environment:
+      - node.name=elasticsearch
+      - discovery.type=single-node
+      - cluster.name=elastic-cluster
+      - bootstrap.memory_lock=true
+      - ES_JAVA_OPTS=-Xms512m -Xmx512m
+        #      - ELASTIC_PASSWORD=elastic
+        #      - KIBANA_PASSWORD=kibana
+      - xpack.license.self_generated.type=basic
+      - xpack.security.enabled=false
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+    volumes:
+      - type: bind
+        source: ./elastic-data
+        target: /usr/share/elasticsearch/data
+    ports:
+      - 9300:9300
+      - 9200:9200
+    networks:
+      backend:
+        aliases:
+          - "elasticsearch"
   zipkin: 
     image: openzipkin/zipkin 
     container_name: zipkin
@@ -194,10 +230,23 @@ services:
       - STORAGE_TYPE=mem
     ports:
       - "9411:9411"
+    depends_on: 
+      - elasticsearch
     networks:
       backend:
         aliases:
-          - "zipkin"                   
+          - "zipkin"
+  kibana:
+    image: kibana:8.7.1
+    volumes:
+      - ./kibana_docker/kibana.yml:/usr/share/kibana/config/kibana.yml
+    ports:
+      - 5601:5601
+    networks:
+      backend:
+        aliases:
+          - "kibana"
+                   
 networks:
   backend:
     driver: bridge

@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<configuration>
+    <include resource="org/springframework/boot/logging/logback/base.xml"/>
+<!--    Include all properties from file-->
+    <property resource="application.properties" />
+
+    <property scope="context" name="logstash.host" value="${spring.logback.logstash.host:-logstash}" />
+
+    <appender name="logstash" class="net.logstash.logback.appender.LogstashTcpSocketAppender">
+        <destination>${spring.logback.logstash.host:-logstash}:${spring.logback.logstash.port:-5000}</destination>
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+<!--    The encoder/layout/appender do not contain caller info by default. -->
+<!--    This can be costly to calculate and should be switched off for busy production environments.-->
+            <includeCallerData>true</includeCallerData>
+            <providers>
+                <mdc>
+                    <excludeMdcKeyName>traceId</excludeMdcKeyName>
+                    <excludeMdcKeyName>spanId</excludeMdcKeyName>
+                </mdc>
+                <contextName/>
+                <version/>
+                <logLevel/>
+                <loggerName/>
+                <callerData/>
+                <message>msg</message>
+                <pattern>
+                    <pattern>
+                        <omitEmptyFields>true</omitEmptyFields>
+                        {
+                            "stamp": {
+                                "timestamp": "%date{ISO8601}",
+                                "relative": "#asLong{%relative}"
+                            },
+                            "trace": {
+                                "trace_id": "%mdc{traceId}",
+                                "span_id": "%mdc{spanId}",
+                                "parent_span_id": "%mdc{ParentSpanId}",
+                                "exportable": "%mdc{spanExportable}"
+                            }
+                        }
+                    </pattern>
+                </pattern>
+                <threadName/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+    <root level="INFO">
+        <appender-ref ref="logstash"/>
+        <appender-ref ref="CONSOLE"/>
+    </root>
+    <logger name="org.springframework" level="INFO"/>
+    <logger name="com.microframe" level="DEBUG"/>
+</configuration>
