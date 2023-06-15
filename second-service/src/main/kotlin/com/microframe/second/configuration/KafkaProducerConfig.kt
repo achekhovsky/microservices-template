@@ -31,7 +31,7 @@ class KafkaProducerConfig {
 
     @Bean
     fun secondServiceEventTopic(): NewTopic? {
-        return NewTopic(topicName, 1, 1.toShort())
+        return NewTopic(topicName, 2, 1.toShort())
     }
 
     @Bean

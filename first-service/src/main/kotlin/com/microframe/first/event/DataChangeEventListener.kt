@@ -1,7 +1,6 @@
 package com.microframe.first.event
 
 import com.microframe.custom.utils.event.DataChangeEventModel
-import com.microframe.first.service.FirstService
 import com.microframe.first.service.client.SecondServiceDiscoveryClient
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
@@ -19,8 +18,6 @@ class DataChangeEventListener {
 
     @Autowired
     private lateinit var ssdc: SecondServiceDiscoveryClient
-    @Autowired
-    private lateinit var firstService: FirstService
 
     @KafkaListener(
         topics = ["\${common.data-change-topic}"],
@@ -28,8 +25,9 @@ class DataChangeEventListener {
         )
     fun listenDataChangeEvent(
         @Payload message: DataChangeEventModel,
-        @Header(KafkaHeaders.RECEIVED_PARTITION) partition: Int) {
-        logger.debug("Received Kafka Message: $message from partition: $partition")
+        @Header(KafkaHeaders.RECEIVED_PARTITION) partition: Int,
+        @Header(KafkaHeaders.GROUP_ID) group: String) {
+        logger.debug("Received Kafka Message: $message from partition: $partition and group: $group")
         when(message.event) {
             DataChangeEventModel.Actions.CREATE -> {
                 val secondServiceInstance = ssdc.getFromServiceById(message.serviceInstanceId, Locale.getDefault())
@@ -56,11 +54,4 @@ class DataChangeEventListener {
             else -> {logger.debug("It was just a GET, the cache was not updated")}
         }
     }
-
-//    private fun updateSecondNameInFirstInstances(secondName: String) {
-//        val firsts = firstService.findFirstBySecondId(secondName)
-//        firsts.forEach {
-//            it.secondId
-//        }
-//    }
 }

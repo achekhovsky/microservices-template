@@ -12,6 +12,8 @@ group = "com.microframe"
 version = "0.0.1-SNAPSHOT"
 java.sourceCompatibility = JavaVersion.VERSION_17
 
+val micrometerTracing = "1.0.0"
+
 repositories {
 	mavenCentral()
 	maven { url = uri("https://artifactory-oss.prod.netflix.net/artifactory/maven-oss-candidates") }
@@ -28,6 +30,12 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-starter-bootstrap")
 
 	implementation("org.springframework.boot:spring-boot-starter-oauth2-client:3.0.2")
+
+	implementation("net.logstash.logback:logstash-logback-encoder:7.3")
+	implementation(platform("io.micrometer:micrometer-tracing-bom:$micrometerTracing"))
+	implementation("io.micrometer:micrometer-observation")
+	implementation("io.micrometer:micrometer-tracing-bridge-brave")
+	implementation("io.zipkin.reporter2:zipkin-reporter-brave")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

@@ -1,9 +1,12 @@
 package com.microframe.first.service
 
+import com.microframe.first.filters.UserContextFilter
 import com.microframe.first.model.FirstServiceModel
 import com.microframe.first.repository.FirstRepository
 import com.microframe.first.service.client.SecondServiceDiscoveryClient
 import io.github.resilience4j.bulkhead.annotation.Bulkhead
+import org.slf4j.Logger
+import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.context.MessageSource
@@ -12,6 +15,8 @@ import java.util.*
 
 @Service
 open class FirstService {
+    private val logger: Logger = LoggerFactory.getLogger(UserContextFilter::class.java)
+
     @Autowired
     lateinit var messages: MessageSource
     @Autowired

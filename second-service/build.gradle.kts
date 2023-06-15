@@ -18,6 +18,7 @@ repositories {
 }
 
 val resilience4jVersion = "2.0.2"
+val micrometerTracing = "1.0.0"
 
 dependencies {
 	implementation(layout.files("../utils/microframe-utils-1.0.1.jar"))
@@ -48,6 +49,12 @@ dependencies {
 	implementation("org.springframework.cloud:spring-cloud-stream:4.0.1")
 	implementation("org.springframework.cloud:spring-cloud-starter-stream-kafka:4.0.1")
 	implementation("org.springframework.kafka:spring-kafka:3.0.5")
+
+	implementation("net.logstash.logback:logstash-logback-encoder:7.3")
+	implementation(platform("io.micrometer:micrometer-tracing-bom:$micrometerTracing"))
+	implementation("io.micrometer:micrometer-observation")
+	implementation("io.micrometer:micrometer-tracing-bridge-brave")
+	implementation("io.zipkin.reporter2:zipkin-reporter-brave")
 
 	testImplementation("org.springframework.boot:spring-boot-starter-test")
 }

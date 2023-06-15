@@ -180,7 +180,24 @@ services:
     networks:
       backend:
         aliases:
-          - "kafka"          
+          - "kafka"
+  zipkin: 
+    image: openzipkin/zipkin 
+    container_name: zipkin
+    environment: 
+    #Only if elsticsearch version low then 8. 
+#      - STORAGE_TYPE=elasticsearch
+#      - "ES_HOSTS=elasticsearch:9200" #,http://elasticsearch:9300,http://localhost:9200
+#      - ES_USERNAME=elastic
+#      - ES_PASSWORD=elastic
+    environment: 
+      - STORAGE_TYPE=mem
+    ports:
+      - "9411:9411"
+    networks:
+      backend:
+        aliases:
+          - "zipkin"                   
 networks:
   backend:
     driver: bridge

@@ -1,9 +1,11 @@
 package com.microframe.first.service.client
 
+import com.microframe.custom.utils.wrappers.ObservationWrapperUtil
 import com.microframe.first.model.SecondServiceModel
 import com.microframe.first.repository.redis.SecondServiceRedisRepository
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker
 import io.github.resilience4j.retry.annotation.Retry
+import io.micrometer.observation.ObservationRegistry
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,18 +29,30 @@ class SecondServiceDiscoveryClient {
     private lateinit var restTemplate: RestTemplate
     @Autowired
     private lateinit var secondServiceRedisRepository: SecondServiceRedisRepository
+    @Autowired
+    private lateinit var observationRegistry: ObservationRegistry
+
 
 
     //Breaker for the services interaction
     @CircuitBreaker(name = "firstServiceExternalCBreaker")
     @Retry(name = "firstServiceExternalRetry")
     fun getSecond (secondId: String, locale: Locale): SecondServiceModel? {
-        return try {
-            checkNotNull(checkCsh(secondId)) { logger.error("Second instance with id [$secondId] not found in Redis cash.") }
-        } catch (ex: Exception) {
-            val secondFromService = getFromServiceById(secondId, locale)
-            secondFromService?.let { updateCsh(it) }
-            secondFromService
+        return ObservationWrapperUtil.wrapWithEventAndInvoke(
+            observationRegistry,
+            "span.name",
+            "Getting second service instance from first service",
+            "start.event",
+            "end.event",
+            listOf("secondId" to secondId)
+        ) {
+            try {
+                checkNotNull(checkCsh(secondId)) { logger.error("Second instance with id [$secondId] not found in Redis cash.") }
+            } catch (ex: Exception) {
+                val secondFromService = getFromServiceById(secondId, locale)
+                secondFromService?.let { updateCsh(it) }
+                secondFromService
+            }
         }
     }
 
